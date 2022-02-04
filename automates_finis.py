@@ -105,7 +105,7 @@ def reachable(eqS,Es,T):
 def reach_A(A):
     # A : automate fini
     # A COMPLETER
-    return 
+    return reachable(A[4],A[2],A[1])
 
 # Liste des etats a partir desquels un etat acceptant est accessible
 # ------------------------------------------------------------------
@@ -113,8 +113,12 @@ def reach_A(A):
 def co_reach_A(A):
     # A : automate fini
     # A COMPLETER
-    return
-
+    S,T,I,F,eq = A
+    co_r = []
+    for s in S:
+        if(intersection(eq,F,reachable(eq,[s],T))):
+            co_r=ajout(eq,s,co_r)
+    return co_r
 # Acceptation d'un mot
 #---------------------
 

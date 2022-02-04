@@ -54,7 +54,7 @@ def make_eq_set(eq):
 
 def ajout(eq,x,E):
     if is_in(eq,x,E):
-        return E
+       	return E
     else:
         return [x]+E
 
