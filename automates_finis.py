@@ -31,7 +31,7 @@ def eps_cl(eqS,s,T):
 		to_be_done=[]
 		for doing in to_do:
 			for transition in T:
-				if eqS(transition[0],doing) and transition[1] == None and all([not eqS(s_done,transition[2]) for s_done in done]):
+				if eqS(transition[0],doing) and transition[1] == None and not is_in(eqS,transition[2],done):
 					to_be_done+=[transition[2]]
 		done+=to_do
 		to_do=to_be_done
