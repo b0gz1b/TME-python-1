@@ -64,9 +64,14 @@ def lt_from_s_deterministic(T):
 # -----------------------------------------
 
 def is_deterministic(A):
-    # A : automate fini
-    # A COMPLETER
-    return
+    S,T,I,F,eqS = A
+    if len(I)>1:
+        return False
+    else:
+        for s in S:
+            if not lt_from_s_deterministic(lt_from_s(eqS,s,T)):
+                return False
+    return True
 
 # Determinisation
 #----------------
@@ -90,7 +95,28 @@ def make_eq_trans(eqS):
 def make_det(A):
     # A : automate fini
     # A COMPLETER
-    return
- 
+    S,T,I,F,eqS = A
+    if(not is_deterministic(A)):
+        to_do = [eps_cl_set(eqS,I,T)]
+        done = []
+        Tdet = []
+        while(to_do):
+            doing = to_do[-1]
+            to_do = to_do[:-1]
+            done = ajout(eqS,doing,done)
+            t_from_doing = []
+            for s in doing:
+                for t in lt_from_s(eqS,s,T):
+                    t_from_doing = ajout(make_eq_trans(eqS),t,t_from_doing)
+            for (_,t,j) in t_from_doing:
+                new_t = (doing,t,eps_cl(eqS,j,T))
+                prev_len_tdet = len(Tdet)
+                Tdet = ajout(make_eq_trans(make_eq_set(eqS)),new_t,Tdet)
+                if(len(Tdet)>prev_len_tdet):
+                    to_do = ajout(make_eq_set(eqS),new_t[2],to_do)
+        Fdet = [s for s in done if any([True for ss in s if is_in(eqS,ss,F)])]
+        return (done,Tdet,eps_cl_set(eqS,I,T),Fdet,eqS)
+    return A
+
 
 
