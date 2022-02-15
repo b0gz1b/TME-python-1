@@ -102,7 +102,7 @@ def make_det(A):
         to_do = [eps_cl_set(eqS,I,T)] # File des états à traiter
         done = [] # Ensembles des états de l'automate détermisé
         T_det = [] # Ensembles des transitions de l'automate détermisé
-        I_det = [] # Ensembles des états initiaux de l'automate détermisé
+        I_det = [to_do[0]] # Ensembles des états initiaux de l'automate détermisé
         F_det = [] # Ensembles des états finaux de l'automate détermisé
         while to_do: # Tant qu'il reste des états à traiter
             done.append(to_do[-1]) # Selection de l'état à traiter
@@ -111,14 +111,14 @@ def make_det(A):
             for l in L: # Pour chacune de ces étiquettes
                 state = []
                 for s in done[-1]: # Pour chacun des états de l'ensemble
-                    state = ajout(eqSet_det,reach_from(eqS,s,l,T),state) # On ajoute au nouvel état les états accesibles par l'étiquette
-                state = eps_cl_set(eqS,state,T) # On construit l'espilon-clotûre du nouvel état
-                T_det = ajout(eqSet_trans_det,(done[-1],l,state),T_det) # On ajoute la transition à l'automate determinisé
-                if not is_in(eqSet_det,state,done): # Si l'état n'est pas dans l'automate
-                    to_do = ajout(eqSet_det,state,to_do) # On l'ajoute à la file d'attente
-                    if intersection(eqS,I,state): # Si il est composé d'au moins un état initial
-                        I_det = ajout(eqSet_det,state,I_det) # On l'ajoute aux initiaux
-                    if intersection(eqS,F,state): # Si il est composé d'au moins un état final
-                        F_det = ajout(eqSet_det,state,F_det) # On l'ajoute aux finaux
+                    for d in reach_from(eqS,s,l,T):
+                        state = ajout(eqS,d,state) # On ajoute au nouvel état les états accesibles par l'étiquette
+                if state:
+                    state = eps_cl_set(eqS,state,T) # On construit l'espilon-clotûre du nouvel état
+                    T_det = ajout(eqSet_trans_det,(done[-1],l,state),T_det) # On ajoute la transition à l'automate determinisé
+                    if not is_in(eqSet_det,state,done): # Si l'état n'est pas dans l'automate
+                        to_do = ajout(eqSet_det,state,to_do) # On l'ajoute à la file d'attente
+                        if intersection(eqS,F,state): # Si il est composé d'au moins un état final
+                            F_det = ajout(eqSet_det,state,F_det) # On l'ajoute aux finaux
         return (done,T_det,I_det,F_det,eqSet_det)
     return A

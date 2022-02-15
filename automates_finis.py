@@ -25,17 +25,17 @@ def eps_cl(eqS,s,T):
     # eqS : fonction d'egalite sur les etats
     # s : etat
     # T : liste de transitions
-	done=[] # ensembles des états traités, initialisé à ∅
-	to_do=[s] # ensemble des états à traiter, initailaisé à s
-	while to_do:
-		to_be_done=[]
-		for doing in to_do:
-			for transition in T:
-				if eqS(transition[0],doing) and transition[1] == None and not is_in(eqS,transition[2],done):
-					to_be_done+=[transition[2]]
-		done+=to_do
-		to_do=to_be_done
-	return done
+    done=[] # ensembles des états traités, initialisé à ∅
+    to_do=[s] # ensemble des états à traiter, initailaisé à s
+    while to_do:
+        to_do_i1 = []
+        for doing in to_do:
+            done = ajout(eqS,doing,done)
+            for transition in T:
+                if eqS(transition[0],doing) and transition[1] == None and not is_in(eqS,transition[2],done):
+                    to_do_i1 = ajout(eqS,transition[2],to_do_i1)
+        to_do = to_do_i1
+    return done
 
 
 # Epsilon-fermeture d'un ensemble d'etats
@@ -48,7 +48,8 @@ def eps_cl_set(eqS,S,T):
     # A COMPLETER
     ret=[]
     for s in S:
-    	ret+=eps_cl(eqS,s,T)
+        for d in eps_cl(eqS,s,T):
+            ret = ajout(eqS,d,ret)
     return ret
 
 
